@@ -1,37 +1,50 @@
-#install.packages("tidyverse")
+---
+title: "lindh"
+output: html_document
+---
+
+``` {r}
+install.packages("tidyverse")
 library(tidyverse)
 
 # SCRAPING
 
-#install.packages('pdftools')
+install.packages('pdftools')
 library(pdftools)
 
-#install.packages("tabulizer")
+install.packages("tabulizer")
 library("tabulizer")
 
-#install.packages("tabulizerjars")
+install.packages("tabulizerjars")
 library(tabulizerjars)
+```
 
+``` {r}
 pdf.file <- "Lindh.pdf"
 
+# todo: make page numbers program arguments
 pdf.dat <- extract_tables(pdf.file, pages = c(38:39), method = "decide")
 
 pdf.tbl <- lapply(pdf.dat, as.data.frame) %>% bind_rows()
 
-names(pdf.tbl) <- as.matrix(pdf.tbl[1,])
+# todo: remove once mvp exists; just for basic debugging
+pdf.tbl <- pdf.tbl[c(1:30),]
+
+names(pdf.tbl) <- headers <- as.matrix(pdf.tbl[1,])
 
 pdf.tbl <- pdf.tbl[-1,]
 
 for(row in 1:nrow(pdf.tbl)) {
-    table <- pdf.tbl
-    species <- table[row, 'Species']
-    vern <- table[row, 'Vernacular name']
-    use <- table[row, 'Use']
-    source <- table[row, 'Source']
-    # print(paste(species, vern, use, source))
-    if(table[row, 'Family'] == "")
-        print(
-            pdf.tbl[row - 1, 'Use'] <- paste(pdf.tbl[row - 1, 'Use'], " ", pdf.tbl[row, 'Use'])
-        )
-    # print(paste(row, pdf.tbl[row, 'Species']))
+    if(pdf.tbl[row, 'Family'] == "") {
+        for(header in headers) {
+            pdf.tbl[row - 1, header] <- paste(pdf.tbl[row - 1, header], pdf.tbl[row, header])
+            pdf.tbl[row, header] <- NA
+        }
+    }
 }
+
+pdf.tbl <- pdf.tbl %>% drop_na()
+
+# todo: make this a program argument
+write.csv(pdf.tbl, file = "Lindh1.csv")
+```

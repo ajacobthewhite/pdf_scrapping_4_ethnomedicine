@@ -1,1 +1,1 @@
-# pdf_scrapping_4_ethnomedicine
+# Scrapping and Cleaning Tables from PDFs

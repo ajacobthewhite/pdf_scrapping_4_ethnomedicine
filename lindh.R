@@ -1,17 +1,25 @@
-#install.packages("tidyverse")
+---
+title: "lindh"
+output: html_document
+---
+
+``` {r}
+install.packages("tidyverse")
 library(tidyverse)
 
 # SCRAPING
 
-#install.packages('pdftools')
+install.packages('pdftools')
 library(pdftools)
 
-#install.packages("tabulizer")
+install.packages("tabulizer")
 library("tabulizer")
 
-#install.packages("tabulizerjars")
+install.packages("tabulizerjars")
 library(tabulizerjars)
+```
 
+``` {r}
 pdf.file <- "Lindh.pdf"
 
 # todo: make page numbers program arguments
@@ -35,7 +43,8 @@ for(row in 1:nrow(pdf.tbl)) {
     }
 }
 
-pdf.tbl %>% drop_na()
+pdf.tbl <- pdf.tbl %>% drop_na()
 
 # todo: make this a program argument
 write.csv(pdf.tbl, file = "Lindh1.csv")
+```
